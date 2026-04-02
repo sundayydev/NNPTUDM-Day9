@@ -4,11 +4,6 @@ let { checkLogin } = require("../utils/authHandler");
 let messageModel = require("../schemas/messages");
 let { uploadImage } = require("../utils/uploadHandler");
 
-/**
- * GET /
- * Lấy tin nhắn cuối cùng của mỗi cuộc hội thoại
- * mà user hiện tại đã nhắn hoặc nhận
- */
 router.get("/", checkLogin, async function (req, res, next) {
   try {
     let currentUserId = req.user._id;
@@ -21,7 +16,6 @@ router.get("/", checkLogin, async function (req, res, next) {
       .populate("to", "username avatarUrl")
       .sort({ createdAt: -1 });
 
-    // Lấy tin nhắn cuối cùng của mỗi cuộc hội thoại (theo partner)
     let conversationMap = new Map();
 
     for (const msg of messages) {
@@ -42,14 +36,7 @@ router.get("/", checkLogin, async function (req, res, next) {
   }
 });
 
-/**
- * POST /
- * Gửi tin nhắn đến userID
- * Body (multipart/form-data hoặc JSON):
- *   - to: userID nhận tin nhắn
- *   - text: nội dung (nếu type là text)
- *   - file: file đính kèm (nếu có, type tự động là "file")
- */
+
 router.post(
   "/",
   checkLogin,
@@ -85,11 +72,7 @@ router.post(
   }
 );
 
-/**
- * GET /:userID
- * Lấy toàn bộ tin nhắn giữa user hiện tại và userID
- * (from: me -> to: userID) HOẶC (from: userID -> to: me)
- */
+
 router.get("/:userID", checkLogin, async function (req, res, next) {
   try {
     let currentUserId = req.user._id;
